@@ -2,13 +2,12 @@
 
 var childProcess = require('child_process');
 var promise = require("bluebird");
+var conversion = promise.promisify(require('phantom-html-to-pdf')());
 
 module.exports = {
   initialize : function (dataSource, callback) {
 
     var settings = dataSource.settings || {};
-
-    var conversion = promise.promisify(require('phantom-html-to-pdf')());
 
     function createRendering(id, html, extension, folder) {
       var Container = dataSource.models.Container;
