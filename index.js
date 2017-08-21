@@ -9,6 +9,14 @@ module.exports = {
 
     var settings = dataSource.settings || {};
 
+    function createRenderings(renderings) {
+      var jobs = renderings.map(function (rendering) {
+        return createRendering(
+          rendering.id, rendering.html, rendering.extension, rendering.folder)
+      })
+      return promise.all(jobs);
+    }
+
     function createRendering(id, html, extension, folder) {
       var Container = dataSource.models.Container;
       var app = Container.app;
@@ -60,7 +68,8 @@ module.exports = {
 
     var connector = {
       createRendering: createRendering,
-      getRendering : getRendering
+      getRendering : getRendering,
+      createRenderings: createRenderings
     };
 
     dataSource.connector = connector;
