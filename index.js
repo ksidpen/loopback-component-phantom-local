@@ -13,9 +13,6 @@ module.exports = {
       var jobs = renderings.map(function (rendering) {
         return createRendering(
           rendering.id, rendering.html, rendering.extension, rendering.folder)
-          .catch(function (err) {
-            return err;
-          })
       })
       return promise.all(jobs);
     }
