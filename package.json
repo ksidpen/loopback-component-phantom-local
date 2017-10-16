@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.5.0",
-    "phantom-html-to-pdf": "https://github.com/ksidpen/phantom-html-to-pdf.git"
+    "cheerio": "^1.0.0-rc.2",
+    "phantom-html-to-pdf": "https://github.com/ksidpen/phantom-html-to-pdf.git",
+    "twemoji": "^2.5.0"
   }
 }
