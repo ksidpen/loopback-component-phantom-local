@@ -26,7 +26,6 @@ module.exports = {
 
       folder = folder || '';
 
-      try{
       html = twemoji.parse(html, {
           folder: '/svg',
           ext: '.svg',
@@ -38,9 +37,6 @@ module.exports = {
       ('head')
       .append('<style>img.emoji {height: 1em;width: 1.3em;margin: .1em;vertical-align: text-bottom;}</style>')
       html = parsedHtml.html();
-    }catch(e){
-      console.error(e);
-    }
 
       var phantomArgs = app.get('phantom');
       phantomArgs.format = extension;
