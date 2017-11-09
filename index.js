@@ -7,6 +7,8 @@ var conversion = promise.promisify(require('phantom-html-to-pdf')());
 var twemoji = require('twemoji');
 var cheerio = require('cheerio');
 
+var PDFParser = require("pdf2json");
+
 module.exports = {
   initialize : function (dataSource, callback) {
     var settings = dataSource.settings || {};
@@ -14,12 +16,12 @@ module.exports = {
     function createRenderings(renderings) {
       var jobs = renderings.map(function (rendering) {
         return createRendering(
-          rendering.id, rendering.html, rendering.extension, rendering.folder)
+          rendering.id, rendering.html, rendering.extension, rendering.folder, rendering.pages)
       })
       return promise.all(jobs);
     }
 
-    function createRendering(id, html, extension, folder) {
+    function createRendering(id, html, extension, folder, pages) {
       var Container = dataSource.models.Container;
       var app = Container.app;
       var storage = app.datasources.storage;
@@ -51,8 +53,25 @@ module.exports = {
         return new promise(function(resolve, reject) {
           var gs = childProcess.spawn('gs', ['-q', '-o', '-', '-sDEVICE=pdfwrite',
            '-dPDFSETTINGS=/prepress', '-']);
-           resolve(gs.stdout);
+
            result.stream.pipe(gs.stdin);
+           if(pages){
+             let pdfParser = new PDFParser();
+             pdfParser.on("pdfParser_dataError", errData => {
+               reject(errData);
+             });
+             pdfParser.on("pdfParser_dataReady", pdfData => {
+              if(pdfData.formImage.Pages.length !== pages){
+                reject(new Error('pdf has invalid amount of pages'));
+              }else{
+                resolve(gs.stdout);
+              }
+             });
+             result.stream.pipe(pdfParser);
+           }else{
+             resolve(gs.stdout);
+           }
+
         });
       })
       .then(function(result) {
